@@ -55,4 +55,4 @@ Executed by server script to cleanup orders and move payment information into da
 cleanup_tmp_payments(orders: Vec<u32>)
 ```
 
-orders - list of order id to clenup.
+orders - list of order id to cleanup.

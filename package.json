@@ -10,7 +10,7 @@
     "contract:init": "CONTRACT_ID=$(<neardev/dev-account) && near call new_default_meta",
     "test:unit": "cd contract && cargo test",
     "local:server": "env $(cat .env.local) nodemon ./server/index.js --watch src/server",
-    "prod:server": "env $(cat .env.production) pm2 restart ./server/index.js --name near-mainnet --update-env"
+    "prod:server": "env $(cat .env.production) pm2 restart ./server/index.js --name near-control-payments --update-env"
   },
   "devDependencies": {
     "near-cli": "^3.3.0",
