@@ -1,29 +1,34 @@
 const express = require("express");
-const { prisma } = require("./utils/prisma");
 const {
   initContract,
   convertToTera,
-} = require("./utils/utils");
+} = require("./utils");
+const { Sequelize, QueryTypes } = require("sequelize");
 
 const app = express();
 const port = process.env.SERVER_PORT;
 
-const corsConfig = {
-  origin: [
-    "http://localhost:1234",
-  ],
-  methods: "GET,OPTION,HEAD,PUT,PATCH,POST,DELETE",
-  optionsSuccessStatus: 200,
-};
-
 const CHECK_CONTRACT_INTERVAL_SECONDS = 10;
-const contractMain = await initContract();
-console.log(`contractMain`, contractMain);
+const sequelize = new Sequelize(process.env.DATABASE_URL)
 
 const startContractChecks = async () => {
-  console.log(`+`);
+  const contract = await initContract();
+  const tmpOrders = await contract.get_tmp_list();
+  if (tmpOrders.length) {
+    let isList = tmpOrders.map(order => order.order_id);
+    await contract.cleanup_tmp_payments({
+      orders: isList
+    });
 
-// let users = await prisma.Users.findMany();
+    tmpOrders.map(async order => {
+      await sequelize.query("UPDATE handmade_orders SET is_paid = TRUE WHERE id = :id", {
+        replacements: {
+          id: order.order_id,
+        },
+        type: QueryTypes.SELECT
+      });
+    });
+  }
 }
 
 setInterval(() => {

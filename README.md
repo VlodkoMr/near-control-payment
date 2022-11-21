@@ -20,7 +20,7 @@ npm run deploy
 3. Copy .env.sample into .env.local and/or .env.production files and set variables:
 
 - NODE_ENV: testnet or mainnet environment.
-- ACCOUNT_PRIVATE_KEY: Private key for deployed smart-contract.
+- ACCOUNT_PRIVATE_KEY: Private key for deployed smart-contract (without ed25519:).
 - DB_CONNECTION: database prisma connection.
 
 4. Update server/index.js script to handle new transactions and save in your database structure.

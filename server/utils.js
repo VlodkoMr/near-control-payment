@@ -5,8 +5,8 @@ function convertToTera(amount) {
 }
 
 const CONTRACT_NAME = process.env.CONTRACT_NAME;
-const VIEW_METHODS = [];
-const CHANGE_METHODS = ["send_order_payment", "process_tmp_payments"];
+const VIEW_METHODS = ["get_tmp_list"];
+const CHANGE_METHODS = ["send_order_payment", "cleanup_tmp_payments"];
 
 function getConfig(env) {
   console.log(env);

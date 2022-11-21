@@ -46,7 +46,14 @@ impl Contract {
         Promise::new(to_account).transfer(env::attached_deposit())
     }
 
-    pub fn process_tmp_payments(&mut self) {
+    pub fn cleanup_tmp_payments(&mut self, orders: Vec<u32>) {
         assert_eq!(env::predecessor_account_id(), env::current_account_id(), "Unauthorized");
+
+        for order_id in orders {
+            let index = self.tmp_orders_list.iter().position(|r| r.order_id == order_id);
+            if index.is_some() {
+                self.tmp_orders_list.remove(index.unwrap());
+            }
+        }
     }
 }
