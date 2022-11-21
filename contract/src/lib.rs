@@ -1,47 +1,52 @@
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{env, near_bindgen, AccountId, PanicOnDefault};
+use near_sdk::{AccountId, env, near_bindgen, Promise, require};
+use near_sdk::json_types::U128;
 
 #[derive(Copy, Clone, Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct TmpOrder {
-    id: u32,
-    payment: u128,
+    order_id: u32,
+    payment: U128,
 }
 
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
+#[derive(BorshDeserialize, BorshSerialize)]
 pub struct Contract {
-    owner_id: AccountId,
     tmp_orders_list: Vec<TmpOrder>,
+}
+
+impl Default for Contract {
+    fn default() -> Self {
+        Self {
+            tmp_orders_list: vec![],
+        }
+    }
 }
 
 #[near_bindgen]
 impl Contract {
-    #[init]
-    pub fn new_default_meta(owner_id: AccountId) -> Self {
-        Self {
-            owner_id,
-            tmp_orders_list: vec![],
-        }
-    }
-
     pub fn get_tmp_list(&self) -> Vec<TmpOrder> {
         self.tmp_orders_list.to_vec()
     }
 
     #[payable]
-    pub fn send_order_payment(&mut self, order_id: u32) {
+    pub fn send_order_payment(&mut self, order_list: Vec<TmpOrder>, to_account: AccountId) -> Promise {
         let mut tmp_list = self.tmp_orders_list.to_vec();
-        tmp_list.push(TmpOrder {
-            id: order_id,
-            payment: env::attached_deposit(),
-        });
 
+        let mut total_pay = 0;
+        for order in order_list.iter() {
+            tmp_list.push(order.clone());
+            total_pay += order.payment.0;
+        }
+
+        require!(total_pay == env::attached_deposit(), "Wrong payment amount");
         self.tmp_orders_list = tmp_list;
+
+        Promise::new(to_account).transfer(env::attached_deposit())
     }
 
     pub fn process_tmp_payments(&mut self) {
-        assert_eq!(env::predecessor_account_id(), self.owner_id, "Unauthorized");
+        assert_eq!(env::predecessor_account_id(), env::current_account_id(), "Unauthorized");
     }
 }

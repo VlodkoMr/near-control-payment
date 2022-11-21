@@ -7,6 +7,7 @@
     "build": "npm run build:contract",
     "build:contract": "cd contract && ./build.sh",
     "test": "npm run test:unit && npm run test:integration",
+    "contract:init": "CONTRACT_ID=$(<neardev/dev-account) && near call new_default_meta",
     "test:unit": "cd contract && cargo test",
     "local:server": "env $(cat .env.local) nodemon ./server/index.js --watch src/server",
     "prod:server": "env $(cat .env.production) pm2 restart ./server/index.js --name near-mainnet --update-env"
