@@ -19,9 +19,9 @@ npm run deploy
 
 3. Copy .env.sample into .env.local and/or .env.production files and set variables:
 
-- NODE_ENV: testnet or mainnet environment.
+- NODE_ENV: testnet or mainnet environment where you contract deployed.
 - ACCOUNT_PRIVATE_KEY: Private key for deployed smart-contract (without ed25519:).
-- DB_CONNECTION: database connection URL.
+- DB_CONNECTION: database connection URL. Read more: https://sequelize.org/docs/v6/getting-started/
 
 4. Update server/index.js script to handle new transactions and save in your database structure.
 5. Upload server script and run.
