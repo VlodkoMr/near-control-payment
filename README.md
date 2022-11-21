@@ -34,6 +34,8 @@ npm run deploy
 get_tmp_list()
 ```
 
+Return list (array) of orders: Example: [{order_id: u32, payment: U128}]
+
 #### Add new order to list
 
 Method used to get payment from customer and store this information in temporary storage.
