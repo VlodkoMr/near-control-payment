@@ -26,11 +26,13 @@ impl Default for Contract {
 
 #[near_bindgen]
 impl Contract {
+    // Get new orders list
     pub fn get_tmp_list(&self) -> Vec<TmpOrder> {
         self.tmp_orders_list.to_vec()
     }
 
     #[payable]
+    // Add new order and transfer funds to recipient account
     pub fn send_order_payment(&mut self, order_list: Vec<TmpOrder>, to_account: AccountId) -> Promise {
         let mut tmp_list = self.tmp_orders_list.to_vec();
 
@@ -46,6 +48,7 @@ impl Contract {
         Promise::new(to_account).transfer(env::attached_deposit())
     }
 
+    // Cleanup orders by ID
     pub fn cleanup_tmp_payments(&mut self, orders: Vec<u32>) {
         assert_eq!(env::predecessor_account_id(), env::current_account_id(), "Unauthorized");
 
